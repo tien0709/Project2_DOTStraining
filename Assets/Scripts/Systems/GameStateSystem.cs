@@ -185,7 +185,7 @@ namespace System
         }
 
         private int AIMiniMax(Vector3 Cell, NativeArray<CellType> contemporaryMap){
-            if(contemporaryMap[(int)(Cell.x * 10 + Cell.y)] != CellType.EMPTY) return 1;
+            if(contemporaryMap[(int)(Cell.x * 10 + Cell.y)] != CellType.EMPTY) return 0;
             contemporaryMap[(int)(Cell.x* 10 + Cell.y)] = CellType.RED;
             if(Cell.x == 0 || Cell.y == 0 || Cell.x == 9 || Cell.y == 9) return 1;
 
