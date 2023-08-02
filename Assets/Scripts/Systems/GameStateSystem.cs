@@ -135,14 +135,70 @@ namespace System
                             if(MoveArray[3]!= new Vector2(-1,-1)) {
                                 downScore = AIMiniMax(MoveArray[3], copy);
                             }
-                        copy.Dispose();
 
                             int temp = FindMax(leftScore, rightScore, upScore, downScore);
-                            // have more or 2 score same=>> priority: Up->left->right->bot=>> to accqauire land for advantage
-                            if(temp == upScore ) temp = 2;
-                            else if(temp == leftScore ) temp = 0;
-                            else if(temp == downScore ) temp = 3;
-                            else if(temp == rightScore ) temp = 1;
+
+                        for(int i=0;i<100;i++) copy[i] = LogicMap[i];    
+                            
+                            if(temp == upScore )  {
+                                if(temp != downScore && temp != rightScore && temp != leftScore )temp = 2;
+                                else {
+                                    upScore = AILevel2(MoveArray[2], copy);
+                                    if(temp == downScore) downScore = AILevel2(MoveArray[3], copy);
+                                    if(temp == rightScore) rightScore = AILevel2(MoveArray[1], copy);
+                                    if(temp == leftScore) leftScore = AILevel2(MoveArray[0], copy);
+                                    temp = FindMax(leftScore, rightScore, upScore, downScore);
+                                    if(temp == upScore )  temp = 2;
+                                    else if(temp == downScore )  temp = 3;
+                                    else if(temp == leftScore )  temp = 0;
+                                    else if(temp == rightScore )  temp = 1;
+                                }
+                            }
+                            else if(temp == leftScore ) {
+                                if(temp != downScore && temp != rightScore && temp != upScore )temp = 0;
+                                else {
+                                    leftScore = AILevel2(MoveArray[0], copy);
+                                    if(temp == downScore) downScore = AILevel2(MoveArray[3], copy);
+                                    if(temp == rightScore) rightScore = AILevel2(MoveArray[1], copy);
+                                    if(temp == upScore) upScore = AILevel2(MoveArray[2], copy);
+                                    temp = FindMax(leftScore, rightScore, upScore, downScore);
+                                    if(temp == upScore )  temp = 2;
+                                    else if(temp == downScore )  temp = 3;
+                                    else if(temp == leftScore )  temp = 0;
+                                    else if(temp == rightScore )  temp = 1;
+                                }
+                            }
+                            else if(temp == downScore ) {
+                                if(temp != upScore && temp != rightScore && temp != leftScore )temp = 3;
+                                else {
+                                    downScore = AILevel2(MoveArray[3], copy);
+                                    if(temp == upScore) upScore = AILevel2(MoveArray[2], copy);
+                                    if(temp == rightScore) rightScore = AILevel2(MoveArray[1], copy);
+                                    if(temp == leftScore) leftScore = AILevel2(MoveArray[0], copy);
+                                    temp = FindMax(leftScore, rightScore, upScore, downScore);
+                                    if(temp == upScore )  temp = 2;
+                                    else if(temp == downScore )  temp = 3;
+                                    else if(temp == leftScore )  temp = 0;
+                                    else if(temp == rightScore )  temp = 1;
+                                }
+                            }
+                            else if(temp == rightScore ) {
+                                if(temp != downScore && temp != upScore && temp != leftScore )temp = 1;
+                                else {
+                                    rightScore  = AILevel2(MoveArray[1], copy);
+                                    if(temp == downScore) downScore = AILevel2(MoveArray[3], copy);
+                                    if(temp == upScore) upScore = AILevel2(MoveArray[2], copy);
+                                    if(temp == leftScore) leftScore = AILevel2(MoveArray[0], copy);
+                                    temp = FindMax(leftScore, rightScore, upScore, downScore);
+                                    if(temp == upScore )  temp = 2;
+                                    else if(temp == downScore )  temp = 3;
+                                    else if(temp == leftScore )  temp = 0;
+                                    else if(temp == rightScore )  temp = 1;
+                                }
+                            }
+
+                        copy.Dispose();
+
                             tank.ValueRW.CurrentCell = MoveArray[temp];
 
                             //change Position display of Machine
@@ -185,11 +241,20 @@ namespace System
         }
 
         private int AIMiniMax(Vector3 Cell, NativeArray<CellType> contemporaryMap){
+            if(Cell.x == -1 || Cell.y == -1 || Cell.x == 10 || Cell.y == 10) return 1;
             if(contemporaryMap[(int)(Cell.x * 10 + Cell.y)] != CellType.EMPTY) return 0;
             contemporaryMap[(int)(Cell.x* 10 + Cell.y)] = CellType.RED;
-            if(Cell.x == 0 || Cell.y == 0 || Cell.x == 9 || Cell.y == 9) return 1;
 
             return  AIMiniMax(new Vector3(Cell.x + 1, Cell.y), contemporaryMap) + AIMiniMax(new Vector3(Cell.x - 1, Cell.y), contemporaryMap) +
+            AIMiniMax(new Vector3(Cell.x , Cell.y + 1), contemporaryMap) + AIMiniMax(new Vector3(Cell.x, Cell.y - 1), contemporaryMap);
+        }
+
+        private int AILevel2(Vector3 Cell, NativeArray<CellType> contemporaryMap){
+            if(Cell.x == -1 || Cell.y == -1 || Cell.x == 10 || Cell.y == 10) return 1;
+            if(contemporaryMap[(int)(Cell.x * 10 + Cell.y)] != CellType.EMPTY) return 0;
+            contemporaryMap[(int)(Cell.x* 10 + Cell.y)] = CellType.RED;
+
+            return  1 + AILevel2(new Vector3(Cell.x + 1, Cell.y), contemporaryMap) + AIMiniMax(new Vector3(Cell.x - 1, Cell.y), contemporaryMap) +
             AIMiniMax(new Vector3(Cell.x , Cell.y + 1), contemporaryMap) + AIMiniMax(new Vector3(Cell.x, Cell.y - 1), contemporaryMap);
         }
 
