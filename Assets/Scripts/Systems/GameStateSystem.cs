@@ -185,11 +185,11 @@ namespace System
         }
 
         private int AIMiniMax(Vector3 Cell, NativeArray<CellType> contemporaryMap){
-            if(contemporaryMap[(int)(Cell.x * 10 + Cell.y)] != CellType.EMPTY) return 0;
+            if(contemporaryMap[(int)(Cell.x * 10 + Cell.y)] != CellType.EMPTY) return 1;
             contemporaryMap[(int)(Cell.x* 10 + Cell.y)] = CellType.RED;
             if(Cell.x == 0 || Cell.y == 0 || Cell.x == 9 || Cell.y == 9) return 1;
 
-            return 1 + AIMiniMax(new Vector3(Cell.x + 1, Cell.y), contemporaryMap) + AIMiniMax(new Vector3(Cell.x - 1, Cell.y), contemporaryMap) +
+            return  AIMiniMax(new Vector3(Cell.x + 1, Cell.y), contemporaryMap) + AIMiniMax(new Vector3(Cell.x - 1, Cell.y), contemporaryMap) +
             AIMiniMax(new Vector3(Cell.x , Cell.y + 1), contemporaryMap) + AIMiniMax(new Vector3(Cell.x, Cell.y - 1), contemporaryMap);
         }
 
